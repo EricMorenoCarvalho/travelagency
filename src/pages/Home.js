@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 function Home() {
   return (
@@ -6,6 +6,6 @@ function Home() {
 
     </div>
   )
-}
+};
 
-export default Home
+export default Home;

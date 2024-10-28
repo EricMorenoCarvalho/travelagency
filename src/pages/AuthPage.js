@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import appFirebase from '../firebaseConfig';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
 const auth = getAuth(appFirebase);
+const db = getFirestore(appFirebase);
 
 const AuthPage = () => {
-    const navigate = useNavigate(); // Hook de navegación
+    const navigate = useNavigate();
     const [isRegistering, setIsRegistering] = useState(false);
     const [error, setError] = useState(null);
     const [email, setEmail] = useState('');
@@ -15,22 +17,27 @@ const AuthPage = () => {
 
     const functAuthentication = async (e) => {
         e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
 
         if (isRegistering) {
             try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                navigate("/"); // Redirigir a la página principal después del registro
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, 'users', user.uid), {
+                    username: username,
+                    email: user.email,
+                });
+
+                navigate("/");
             } catch (error) {
-                alert("Try a safer password");
+                setError(error.message);
             }
         } else {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                navigate("/"); // Redirigir a la página principal después del inicio de sesión
+                navigate("/");
             } catch (error) {
-                alert("Wrong email or password");
+                setError(error.message);
             }
         }
     };
@@ -44,23 +51,19 @@ const AuthPage = () => {
                 <p className='text-center text-gray-700'>
                     {isRegistering ? 'Please fill in the details below to sign up' : 'Please enter your details'}
                 </p>
-
                 {error && <p className='text-center text-red-500'>{error}</p>}
-
                 <form onSubmit={functAuthentication} className='space-y-4'>
                     {isRegistering && (
                         <div>
-                            <label htmlFor="username" className='block mb-1 text-base text-gray-700'>Username</label>
+                            <label htmlFor="username" className='block mb-1 text-base text-gray-700'>Name</label>
                             <input
                                 id="username"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50"
                                 placeholder="Enter your name"
                                 onChange={(e) => setUsername(e.target.value)}
-                                value={username}
-                            />
+                                value={username}/>
                         </div>
                     )}
-
                     <div>
                         <label htmlFor="email" className='block mb-1 text-base text-gray-700'>Email</label>
                         <input
@@ -68,10 +71,8 @@ const AuthPage = () => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50"
                             placeholder="Enter your email"
                             onChange={(e) => setEmail(e.target.value)}
-                            value={email}
-                        />
+                            value={email}/>
                     </div>
-
                     <div>
                         <label htmlFor="password" className='block mb-1 text-base text-gray-700'>Password</label>
                         <input
@@ -80,24 +81,19 @@ const AuthPage = () => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50"
                             placeholder="Enter your password"
                             onChange={(e) => setPassword(e.target.value)}
-                            value={password}
-                        />
+                            value={password}/>
                     </div>
-
                     <button
                         type="submit"
-                        className='w-full py-3 mt-6 font-semibold text-white bg-black rounded-md hover:bg-gray-900'
-                    >
+                        className='w-full py-3 mt-6 font-semibold text-white bg-black rounded-md hover:bg-gray-900'>
                         {isRegistering ? 'Register' : 'Log In'}
                     </button>
                 </form>
-
                 <p className='mt-4 text-center text-gray-600'>
                     {isRegistering ? 'Already have an account?' : "Don't have an account?"}
                     <button
                         onClick={() => setIsRegistering(!isRegistering)}
-                        className='ml-2 font-semibold text-black hover:text-gray-900'
-                    >
+                        className='ml-2 font-semibold text-black hover:text-gray-900'>
                         {isRegistering ? 'Log In' : 'Register'}
                     </button>
                 </p>

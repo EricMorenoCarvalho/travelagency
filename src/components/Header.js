@@ -1,42 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Logo from './Icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 
-function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setIsLoggedIn(true);
-        setUsername(user.displayName || user.email.split('@')[0]);
-      } else {
-        setIsLoggedIn(false);
-        setUsername("");
-      }
-    });
-    return unsubscribe;
-  }, []);
+function Header({ isLogedIn, username }) {
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
-      setIsLoggedIn(false);
-      setUsername("");
+      navigate("/");
     });
   };
 
   return (
-    <header className="bg-white fixed top-0 left-0 w-full shadow-sm z-10 border-black">
+    <header className="bg-white fixed top-0 left-0 w-full shadow-lg z-10 border-black">
       <div className="container mx-auto flex justify-between items-center p-4">
         <div className="flex-shrink-0">
           <Link to="/">
             <Logo />
           </Link>
         </div>
-
         <div className="flex-grow text-right">
           <ul className="flex justify-end text-xl">
             <li className="mr-4">
@@ -44,28 +28,35 @@ function Header() {
                 <Link to="/">Home</Link>
               </h1>
             </li>
-            {!isLoggedIn ? (
+            {!isLogedIn ? (
               <li className="mr-4">
                 <h1 className="mb-1 text-xl font-bold text-center">
                   <Link to="/login">Login</Link>
                 </h1>
               </li>
             ) : (
-              <>
-                <li className="mr-4">
-                  <h1 className="mb-1 text-xl font-bold text-center">
-                    Hello, {username}
-                  </h1>
-                </li>
-                <li className="mr-4">
-                  <h1
-                    onClick={handleSignOut}
-                    className="mb-1 text-xl font-bold text-center cursor-pointer"
+              <li className="mr-4">
+                <div className="relative mb-1 text-xl font-bold text-center cursor-pointer group inline-flex items-center">
+                  Hello {username}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-1 inline"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    Log Out
-                  </h1>
-                </li>
-              </>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                  <div className="absolute top-full right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden group-hover:block">
+                    <Link to="/profile" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Profile details
+                    </Link>
+                    <button onClick={handleSignOut} className="text-center block w-full px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Log Out
+                    </button>
+                  </div>
+                </div>
+              </li>
             )}
           </ul>
         </div>
