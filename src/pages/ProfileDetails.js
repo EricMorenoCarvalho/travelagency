@@ -61,12 +61,21 @@ function ProfileDetails() {
 
         setFilteredCities(Object.values(uniqueCities));
     };
-
     const handleSaveChanges = async () => {
         const user = auth.currentUser;
 
+        if (!user || !user.email) {
+            setError("User is not authenticated");
+            return;
+        }
+
         if (username === "") {
             setError("Username cannot be empty");
+            return;
+        }
+
+        if (currentPassword === "") {
+            setError("Current password cannot be empty");
             return;
         }
 
@@ -80,22 +89,30 @@ function ProfileDetails() {
 
         try {
             await signInWithEmailAndPassword(auth, user.email, currentPassword);
+
             const userRef = doc(db, 'users', user.uid);
 
-            await updateDoc(userRef, {
-                username: username !== currentUsername ? username : undefined,
-                city: selectedCity !== currentCity ? selectedCity : undefined,
-            });
+            const updates = {};
+            if (username !== currentUsername) {
+                updates.username = username;
+            }
+            if (selectedCity !== currentCity) {
+                updates.city = selectedCity;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                await updateDoc(userRef, updates);
+            }
 
             localStorage.setItem('username', username);
             localStorage.setItem('city', selectedCity);
             setCity(selectedCity);
             navigate("/");
         } catch (error) {
+            console.log(error.message);
             setError("Current password is incorrect");
         }
     };
-
 
     return (
         <div className='flex items-center justify-center min-h-screen px-7 py-5'>
@@ -153,7 +170,7 @@ function ProfileDetails() {
                         {filteredCities.length > 0 && (
                             <div className='py-2'>
                                 <select
-                                    className="w-full px-3 py-1 mt-1 border border-gray-300 rounded-md"
+                                    className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md"
                                     onChange={(e) => {
                                         setSelectedCity(e.target.value);
                                         setCity(e.target.value);
