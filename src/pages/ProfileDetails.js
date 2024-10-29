@@ -3,6 +3,7 @@ import { getFirestore, getDoc, doc, updateDoc } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import appFirebase from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import cities from '../data/cities.json';
 
 const db = getFirestore(appFirebase);
 const auth = getAuth(appFirebase);
@@ -11,8 +12,12 @@ function ProfileDetails() {
     const navigate = useNavigate();
     const [username, setUsername] = useState(localStorage.getItem('username') || "");
     const [email, setEmail] = useState(localStorage.getItem('email') || "");
+    const [city, setCity] = useState(localStorage.getItem('city') || "");
+    const [citySearch, setCitySearch] = useState(city);
+    const [filteredCities, setFilteredCities] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(city);
     const [currentPassword, setCurrentPassword] = useState("");
-    const [message, setMessage] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -23,55 +28,76 @@ function ProfileDetails() {
                     const userData = userDoc.data();
                     setUsername(userData.username);
                     setEmail(user.email);
+                    setCity(userData.city);
+                    setSelectedCity(userData.city);
+                    setCitySearch(userData.city);
                     localStorage.setItem('username', userData.username);
                     localStorage.setItem('email', user.email);
+                    localStorage.setItem('city', userData.city);
                 } else {
-                    setMessage("No user data found");
+                    setError("No user data found");
                 }
             }
         };
-
         fetchUserData();
     }, []);
+
+    const searchCity = () => {
+        if (citySearch.trim() === '' || citySearch.length < 3) {
+            return;
+        }
+
+        const result = cities.filter(city =>
+            city.name.toLowerCase().includes(citySearch.toLowerCase())
+        );
+
+        const uniqueCities = {};
+        result.forEach(city => {
+            const key = `${city.name}-${city.country}`;
+            if (!uniqueCities[key]) {
+                uniqueCities[key] = city;
+            }
+        });
+
+        setFilteredCities(Object.values(uniqueCities));
+    };
 
     const handleSaveChanges = async () => {
         const user = auth.currentUser;
 
         if (username === "") {
-            setMessage("Username cannot be empty");
-            return;
-        }
-
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists() && userDoc.data().username === username) {
-            setMessage("New name cannot be the same as the current one");
+            setError("Username cannot be empty");
             return;
         }
 
         try {
             await signInWithEmailAndPassword(auth, user.email, currentPassword);
             const userRef = doc(db, 'users', user.uid);
-            await updateDoc(userRef, { username });
+
+            await updateDoc(userRef, { username, city: selectedCity });
+
             localStorage.setItem('username', username);
+            localStorage.setItem('city', selectedCity);
+            setCity(selectedCity);
             navigate("/");
         } catch (error) {
-            setMessage("Current password is incorrect");
+            setError("Current password is incorrect");
         }
     };
 
     return (
-        <div className='flex items-center justify-center min-h-screen px-6 py-8 bg-gray-50'>
-            <div className='w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-xl'>
-                <h1 className='text-4xl font-bold text-center text-gray-800'>
+        <div className='flex items-center justify-center min-h-screen px-7 py-5 bg-gray-50'>
+            <div className='w-full max-w-md p-6 space-y-4 bg-white shadow-lg rounded-xl'>
+                <h1 className='text-3xl font-bold text-center text-gray-800'>
                     Profile details
                 </h1>
                 <p className='text-center text-gray-700'>
-                    Here you can review your details and modify your name
+                    Here you can review your details and modify your name or city
                 </p>
-                {message && (
+                {error && (
                     <p className='text-center text-gray-700 text-sm'>
                         <span>
-                            ⚠️ {message} ⚠️
+                            ⚠️ {error} ⚠️
                         </span>
                     </p>
                 )}
@@ -80,7 +106,7 @@ function ProfileDetails() {
                         <label htmlFor="username" className='block mb-1 text-base text-gray-700'>Name</label>
                         <input
                             id="username"
-                            className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50 bg-white text-gray-700`}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50 bg-white text-gray-700"
                             placeholder="Enter your name"
                             onChange={(e) => setUsername(e.target.value)}
                             value={username}
@@ -93,6 +119,44 @@ function ProfileDetails() {
                             className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-200 text-gray-700"
                             value={email}
                             readOnly />
+                    </div>
+                    <div>
+                        <label htmlFor="citySearch" className='block mb-1 text-base text-gray-700'>City</label>
+                        <div className="flex space-x-2">
+                            <input
+                                id="citySearch"
+                                className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50"
+                                placeholder="Search for a city"
+                                onChange={(e) => setCitySearch(e.target.value)}
+                                value={citySearch}
+                            />
+                            <button
+                                type="button"
+                                onClick={searchCity}
+                                className="w-1/5 py-1 text-white bg-black rounded-md hover:bg-gray-900"
+                            >
+                                🔍
+                            </button>
+                        </div>
+                        {filteredCities.length > 0 && (
+                            <div className='py-2'>
+                                <select
+                                    className="w-full px-3 py-1 mt-1 border border-gray-300 rounded-md"
+                                    onChange={(e) => {
+                                        setSelectedCity(e.target.value);
+                                        setCity(e.target.value);
+                                    }}
+                                    value={selectedCity}
+                                >
+                                    <option value="">Select a city</option>
+                                    {filteredCities.map((city, index) => (
+                                        <option key={index} value={city.name}>
+                                            {city.name}, {city.country}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
                     <div>
                         <label htmlFor="currentPassword" className='block mb-1 text-base text-gray-700'>Current Password</label>

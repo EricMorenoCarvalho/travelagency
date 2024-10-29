@@ -15,28 +15,28 @@ function Header({ isLogedIn, username }) {
 
   return (
     <header className="bg-white fixed top-0 left-0 w-full shadow-lg z-10 border-black">
-      <div className="container mx-auto flex justify-between items-center p-4">
+      <div className="container mx-auto flex justify-between items-center p-3">
         <div className="flex-shrink-0">
           <Link to="/">
             <Logo />
           </Link>
         </div>
         <div className="flex-grow text-right">
-          <ul className="flex justify-end text-xl">
+          <ul className="flex justify-end text-lg">
             <li className="mr-4">
-              <h1 className="mb-1 text-xl font-bold text-center">
+              <h1 className="mb-1 text-lg font-bold text-center">
                 <Link to="/">Home</Link>
               </h1>
             </li>
             {!isLogedIn ? (
               <li className="mr-4">
-                <h1 className="mb-1 text-xl font-bold text-center">
+                <h1 className="mb-1 text-lg font-bold text-center">
                   <Link to="/login">Login</Link>
                 </h1>
               </li>
             ) : (
               <li className="mr-4">
-                <div className="relative mb-1 text-xl font-bold text-center cursor-pointer group inline-flex items-center">
+                <div className="relative mb-1 text-lg font-bold text-center cursor-pointer group inline-flex items-center">
                   Hello {username}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
