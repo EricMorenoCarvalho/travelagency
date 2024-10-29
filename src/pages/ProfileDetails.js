@@ -70,11 +70,22 @@ function ProfileDetails() {
             return;
         }
 
+        const currentCity = localStorage.getItem('city');
+        const currentUsername = localStorage.getItem('username');
+
+        if (username === currentUsername && selectedCity === currentCity) {
+            setError("You must change something to save changes");
+            return;
+        }
+
         try {
             await signInWithEmailAndPassword(auth, user.email, currentPassword);
             const userRef = doc(db, 'users', user.uid);
 
-            await updateDoc(userRef, { username, city: selectedCity });
+            await updateDoc(userRef, {
+                username: username !== currentUsername ? username : undefined,
+                city: selectedCity !== currentCity ? selectedCity : undefined,
+            });
 
             localStorage.setItem('username', username);
             localStorage.setItem('city', selectedCity);
@@ -85,9 +96,10 @@ function ProfileDetails() {
         }
     };
 
+
     return (
-        <div className='flex items-center justify-center min-h-screen px-7 py-5 bg-gray-50'>
-            <div className='w-full max-w-md p-6 space-y-4 bg-white shadow-lg rounded-xl'>
+        <div className='flex items-center justify-center min-h-screen px-7 py-5'>
+            <div className='w-full max-w-md p-6 space-y-4 shadow-lg rounded-xl bg-white'>
                 <h1 className='text-3xl font-bold text-center text-gray-800'>
                     Profile details
                 </h1>
@@ -125,7 +137,7 @@ function ProfileDetails() {
                         <div className="flex space-x-2">
                             <input
                                 id="citySearch"
-                                className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-opacity-50"
                                 placeholder="Search for a city"
                                 onChange={(e) => setCitySearch(e.target.value)}
                                 value={citySearch}

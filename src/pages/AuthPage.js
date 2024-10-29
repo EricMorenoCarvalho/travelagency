@@ -73,8 +73,8 @@ const AuthPage = () => {
     
 
     return (
-        <div className='flex items-center justify-center min-h-screen px-4 py-5 bg-gray-50'>
-            <div className='w-full max-w-sm p-6 bg-white shadow-lg rounded-lg space-y-4'>
+        <div className='flex items-center justify-center min-h-screen px-4 py-5'>
+            <div className='w-full max-w-sm p-6  shadow-lg rounded-lg space-y-4 bg-white'>
                 <h1 className='text-3xl font-bold text-center text-gray-800'>
                     {isRegistering ? 'Create an Account' : '¡Welcome back!'}
                 </h1>
@@ -117,7 +117,7 @@ const AuthPage = () => {
                     {isRegistering && (
                         <div>
                             <div className='py-1'>
-                                <label htmlFor="citySearch" className='block mb-1 text-sm text-gray-700'>Search City</label>
+                                <label htmlFor="citySearch" className='block mb-1 text-sm text-gray-700'> City</label>
                                 <div className="flex space-x-2">
                                     <input
                                         id="citySearch"

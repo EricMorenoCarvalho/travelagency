@@ -2,7 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
+:root {
     user-select: none;
     font-family: 'Overpass Variable', sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: rgba(230, 230, 230, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #888 rgba(230, 230, 230, 0.5);
+}
+
+@supports (-ms-overflow-style: scrollbar) {
+    * {
+        scrollbar-face-color: #888;
+        scrollbar-track-color: rgba(230, 230, 230, 0.5);
+        scrollbar-width: thin;
+    }
+}
+
+@media screen and (-ms-high-contrast: active),
+(-ms-high-contrast: none) {
+    * {
+        scrollbar-base-color: rgba(230, 230, 230, 0.5);
+    }
+}
+
+.home-title {
+    -webkit-text-stroke: 1px black;
+}
+.header-title{
+    -webkit-text-stroke: 0.5px black;
 }
