@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import Header from './components/Header';
 import ProfileDetails from './pages/ProfileDetails';
 import './App.css';
+import Destinations from './pages/Destinations';
 
 const db = getFirestore();
 
@@ -91,6 +92,7 @@ function AppContent({ logedIn, username, updateUsername, setUsername }) {
           <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
             <Routes>
               <Route path="/login" element={<AuthPage />} />
+              <Route path="/destinations" element={<Destinations />} />
               <Route path="/profile" element={<ProfileDetails setUsername={setUsername} />} />
             </Routes>
           </div>

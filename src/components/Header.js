@@ -37,6 +37,11 @@ function Header({ isLogedIn, username }) {
                 Home
               </Link>
             </li>
+            <li className="m-1">
+              <Link to="/destinations" className="header-title text-white font-bold px-4 py-2 rounded-md hover:bg-gray-700 hover:bg-opacity-75 transition duration-300">
+                Destinations
+              </Link>
+            </li>
             {!isLogedIn ? (
               <li className="m-1">
                 <Link to="/login" className="header-title text-white font-bold px-4 py-2 rounded-md hover:bg-gray-700 hover:bg-opacity-75 transition duration-300">
