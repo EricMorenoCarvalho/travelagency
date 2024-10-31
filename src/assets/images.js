@@ -3,8 +3,9 @@ import thailand from './thailand.webp';
 import japan from './japan.webp';
 import australia from './australia.webp';
 import italy from './italy.webp';
+import photo1 from './photo-1.webp';
 
-const images = {
+const destinationImages = {
     us: { src: us, name: 'the United States' },
     bangkok: { src: thailand, name: 'Thailand' },
     japan: { src: japan, name: 'Japan' },
@@ -12,5 +13,5 @@ const images = {
     italy: { src: italy, name: 'Italy' }
 };
 
-export { us, thailand, japan, australia, italy };
-export default images;
+export { photo1 };
+export default destinationImages;

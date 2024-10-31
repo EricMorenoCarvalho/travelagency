@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import images from '../assets/images';
+import destinationImages, { photo1 } from '../assets/images';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import { Autoplay, Navigation, Pagination, Scrollbar } from 'swiper/modules';
+import { Autoplay, Navigation, Scrollbar } from 'swiper/modules';
 import { Link } from 'react-router-dom';
 
-function Home() {
-  const imageList = Object.values(images);
+function Home({ isLogedIn }) {
+  const imageList = Object.values(destinationImages);
   const [city] = useState(localStorage.getItem('city') || "");
 
   const randomizeArray = (arr) => {
@@ -25,12 +24,11 @@ function Home() {
     <div className="overflow-auto">
       <div className="h-screen">
         <Swiper
-          modules={[Navigation, Pagination, Scrollbar, Autoplay]}
+          modules={[Navigation, Scrollbar, Autoplay]}
           spaceBetween={0}
           slidesPerView={1}
-          autoplay={{ delay: 4500 }}
+          autoplay={{ delay: 4000 }}
           loop={true}
-          pagination={{ clickable:true }}
           scrollbar={{ draggable: true }}
           style={{ height: '100%' }}
           effect={"cube"}
@@ -43,28 +41,35 @@ function Home() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-black bg-opacity-50 p-4 rounded-2xl">  
-                <h1 className="text-white text-4xl md:text-7xl home-title font-bold text-shadow-md text-center max-w-xs md:max-w-xl">
-                  Flights from {city} to {image.name}
-                </h1>
+                <div className="bg-black bg-opacity-50 p-4 rounded-2xl flex flex-col items-center justify-center">
+                  <h1 className="text-white text-4xl md:text-7xl home-title font-bold text-shadow-md text-center max-w-xs md:max-w-xl">
+                    {isLogedIn ? `Flights from ${city} to ${image.name}` : `Flights from ${city} to ${image.name}`}
+                  </h1>
+                  <button className="text-xl mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                    Travel to {image.name}
+                  </button>
                 </div>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
-      <div className="h-screen bg-black flex flex-col items-center justify-center">
-        <h1 className="text-white text-3xl md:text-6xl font-bold text-shadow-md max-w-xs md:max-w-xl text-center mb-10">
-          Explore Our Destinations
-        </h1>
-
-        <div className="text-center text-white max-w-lg mx-5">
-          <p className="text-lg md:text-xl mb-5">
-            Discover breathtaking locations around the world. Our agency offers tailor-made travel packages for every taste. From luxury beach resorts to immersive cultural experiences, we’ve got it all.
-          </p>
-          <Link to="/destinations" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg mt-3">
-            View Destinations
-          </Link>
+      <div
+        className="flex flex-col items-center h-screen max-h-screen justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${photo1})` }} // Usa photo1 aquí
+      >
+        <div className="bg-black bg-opacity-50 p-4 rounded-2xl flex flex-col items-center justify-center">
+          <h1 className="text-white text-4xl md:text-7xl home-title font-bold text-shadow-md text-center max-w-xs md:max-w-xl">
+            Explore Our Destinations
+          </h1>
+          <div className="text-center text-white max-w-lg mx-5">
+            <p className="text-lg md:text-xl mb-5">
+              Discover breathtaking locations around the world. Our agency offers tailor-made travel packages for every taste. From luxury beach resorts to immersive cultural experiences, we’ve got it all.
+            </p>
+            <Link to="/destinations" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg">
+              View Destinations
+            </Link>
+          </div>
         </div>
       </div>
     </div >

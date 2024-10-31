@@ -5,13 +5,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { Swiper, SwiperSlide } from 'swiper/react'; // Importamos Swiper
 import 'swiper/css';
-import images from './assets/images';
+import destinationImages from './assets/images';
 import AuthPage from './pages/AuthPage';
 import Home from './pages/Home';
 import Header from './components/Header';
 import ProfileDetails from './pages/ProfileDetails';
 import './App.css';
 import Destinations from './pages/Destinations';
+import Footer from './components/Footer';
 
 const db = getFirestore();
 
@@ -60,16 +61,16 @@ function AppContent({ logedIn, username, updateUsername, setUsername }) {
     }
   }, [location, logedIn, updateUsername]);
 
-  const imageKeys = Object.keys(images);
+  const imageKeys = Object.keys(destinationImages);
   const randomKey = imageKeys[Math.floor(Math.random() * imageKeys.length)];
-  const randomImage = images[randomKey];
+  const randomImage = destinationImages[randomKey];
 
   return (
     <div style={{ position: 'relative', height: '100vh' }}>
       <Header isLogedIn={logedIn} username={username} />
       {isHomePage ? (
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home isLogedIn={logedIn} />} />
         </Routes>
       ) : (
         <>
@@ -98,6 +99,7 @@ function AppContent({ logedIn, username, updateUsername, setUsername }) {
           </div>
         </>
       )}
+      <Footer />
     </div>
   );
 }
