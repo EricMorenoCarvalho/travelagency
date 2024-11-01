@@ -30,7 +30,7 @@ function Header({ isLogedIn, username }) {
           </Link>
 
         <div className="text-right">
-          <ul className="flex items-center space-x-2 md:space-x-4 text-sm md:text-xl">
+          <ul className="flex items-center md:space-x-4 text-sm md:text-xl">
             <li className="m-0.5">
               <Link to="/" className="header-title text-white font-bold px-3 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-700 hover:bg-opacity-75 transition duration-300">
                 Home

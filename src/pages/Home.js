@@ -55,8 +55,8 @@ function Home({ isLogedIn }) {
         </Swiper>
       </div>
       <div
-        className="flex flex-col items-center h-screen max-h-screen justify-center bg-cover bg-center"
-        style={{ backgroundImage: `url(${photo1})` }} // Usa photo1 aquí
+        className="flex flex-col items-center min-h-screen justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${photo1})` }}
       >
         <div className="bg-black bg-opacity-50 p-4 rounded-2xl flex flex-col items-center justify-center">
           <h1 className="text-white text-4xl md:text-7xl home-title font-bold text-shadow-md text-center max-w-xs md:max-w-xl">
